@@ -1,4 +1,4 @@
-from time import sleep
+
 from .config import *
 from spike import PrimeHub, Motor, MotorPair, ColorSensor, DistanceSensor, ForceSensor
 hub=PrimeHub()

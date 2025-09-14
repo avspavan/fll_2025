@@ -1,0 +1,1 @@
+See src/config.py for flags, run src/main.py to start. Mermaid in docs/flowcharts
