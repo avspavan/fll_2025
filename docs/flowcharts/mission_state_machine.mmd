@@ -1,1 +1,8 @@
-flowchart TD; A[Start]-->B{Line?}; B-->C[Follow]; B-->D[Auto-correct]; D-->B; C-->E[Actuate]; E-->F[Return]; F-->G[End];
+flowchart TD
+  A[Start] --> B{Drive until black?}
+  B -->|Yes| C[Follow line 30cm]
+  B -->|No| D[Auto-correct]
+  D --> B
+  C --> E[Arm down/up]
+  E --> F[Return to base]
+  F --> G[End]

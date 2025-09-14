@@ -1,1 +1,12 @@
-flowchart LR; Main-->Missions-->Modules-->Hardware-->Sensors; Sensors-->Logic-->Motors;
+flowchart LR
+  Main --> Missions
+  Missions --> Autocorrect
+  Missions --> Motion
+  Missions --> LineFollow
+  Missions --> Attachment
+  Motion --> Hardware
+  LineFollow --> Hardware
+  Attachment --> Hardware
+  Hardware --> Sensors
+  Hardware --> Motors
+  Sensors --> Feedback --> Missions
