@@ -1,40 +1,103 @@
 """
-hardware.py — Binds the robot's hub, motors, and sensors to Python objects.
-Includes safe_* wrappers so code will not crash if a sensor is disabled.
+hardware.py — initialize hub, motors, sensors; expose safe accessors.
+If sensors are off/missing, safe_* returns neutral values and the rest of
+the code keeps running.
 
 MIT License.
 """
-from .config import *
-from spike import PrimeHub, Motor, MotorPair, ColorSensor, DistanceSensor, ForceSensor
+from time import sleep
+try:
+    from spike import PrimeHub, Motor, MotorPair, ColorSensor, DistanceSensor, ForceSensor
+except Exception as e:
+    # Allows importing this file off-robot for reading, but real run needs SPIKE runtime.
+    PrimeHub = Motor = MotorPair = ColorSensor = DistanceSensor = ForceSensor = None
 
-# Hub is like the robot's "brain"
-hub = PrimeHub()
+from .config import (
+    PORT_LEFT_MOTOR, PORT_RIGHT_MOTOR, PORT_ARM_MOTOR,
+    PORT_COLOR_SENSOR, PORT_DISTANCE_SENSOR, PORT_FORCE_SENSOR,
+    USE_GYRO, USE_COLOR_SENSOR, USE_DISTANCE_SENSOR, USE_FORCE_SENSOR, VERBOSE
+)
 
-# Motors for driving + arm
-left_motor  = Motor(PORT_LEFT_MOTOR)
-right_motor = Motor(PORT_RIGHT_MOTOR)
-drive_pair  = MotorPair(PORT_LEFT_MOTOR, PORT_RIGHT_MOTOR)
-arm_motor   = Motor(PORT_ARM_MOTOR)
-
-# Sensors (optional)
-color_sensor    = ColorSensor(PORT_COLOR_SENSOR) if USE_COLOR_SENSOR else None
-distance_sensor = DistanceSensor(PORT_DISTANCE_SENSOR) if USE_DISTANCE_SENSOR else None
-force_sensor    = ForceSensor(PORT_FORCE_SENSOR) if USE_FORCE_SENSOR else None
+# Globals
+hub = None
+left_motor = None
+right_motor = None
+drive_pair = None
+arm_motor = None
+color_sensor = None
+distance_sensor = None
+force_sensor = None
 
 def init():
-    """Initialize (placeholder if we need setup later)."""
-    if VERBOSE: print("[HW] Init complete.")
+    """Call once at program start; binds hardware and optional sensors."""
+    global hub, left_motor, right_motor, drive_pair, arm_motor
+    global color_sensor, distance_sensor, force_sensor
 
-# Helper checks
-def has_color(): return color_sensor is not None
+    if PrimeHub is None:
+        raise RuntimeError("SPIKE runtime not detected. Run on the hub or in the SPIKE App (Python).")
+
+    hub = PrimeHub()
+    left_motor  = Motor(PORT_LEFT_MOTOR)
+    right_motor = Motor(PORT_RIGHT_MOTOR)
+    drive_pair  = MotorPair(PORT_LEFT_MOTOR, PORT_RIGHT_MOTOR)
+    arm_motor   = Motor(PORT_ARM_MOTOR)
+
+    if USE_COLOR_SENSOR:
+        try:
+            color_sensor = ColorSensor(PORT_COLOR_SENSOR)
+            if VERBOSE: print(f"[HW] Color sensor on {PORT_COLOR_SENSOR}")
+        except Exception as e:
+            color_sensor = None
+            if VERBOSE: print("[HW] Color sensor not available:", e)
+
+    if USE_DISTANCE_SENSOR:
+        try:
+            distance_sensor = DistanceSensor(PORT_DISTANCE_SENSOR)
+            if VERBOSE: print(f"[HW] Distance sensor on {PORT_DISTANCE_SENSOR}")
+        except Exception as e:
+            distance_sensor = None
+            if VERBOSE: print("[HW] Distance sensor not available:", e)
+
+    if USE_FORCE_SENSOR:
+        try:
+            force_sensor = ForceSensor(PORT_FORCE_SENSOR)
+            if VERBOSE: print(f"[HW] Force sensor on {PORT_FORCE_SENSOR}")
+        except Exception as e:
+            force_sensor = None
+            if VERBOSE: print("[HW] Force sensor not available:", e)
+
+def has_color():    return color_sensor is not None
 def has_distance(): return distance_sensor is not None
-def has_force(): return force_sensor is not None
+def has_force():    return force_sensor is not None
 
-# Safe accessors (return neutral values if not available)
-def safe_get_color(): return color_sensor.get_color() if has_color() else None
-def safe_get_reflected(): return color_sensor.get_reflected_light() if has_color() else 50
-def safe_get_distance_cm(): return distance_sensor.get_distance_cm() if has_distance() else 999
+def safe_get_color():
+    """Return color name (e.g., 'black') or None if unavailable."""
+    if has_color():
+        try: return color_sensor.get_color()
+        except: return None
+    return None
 
-# Gyro wrappers
-def reset_yaw(): hub.motion_sensor.reset_yaw_angle()
-def get_yaw(): return hub.motion_sensor.get_yaw_angle()
+def safe_get_reflected():
+    """Return 0..100 reflectance or 50 if unavailable."""
+    if has_color():
+        try: return color_sensor.get_reflected_light()
+        except: return 50
+    return 50
+
+def safe_get_distance_cm():
+    """Return distance in cm or 999 if unavailable."""
+    if has_distance():
+        try: return distance_sensor.get_distance_cm()
+        except: return 999
+    return 999
+
+def reset_yaw():
+    if hub and USE_GYRO:
+        try: hub.motion_sensor.reset_yaw_angle()
+        except: pass
+
+def get_yaw():
+    if hub and USE_GYRO:
+        try: return hub.motion_sensor.get_yaw_angle()
+        except: return 0
+    return 0

@@ -1,22 +1,10 @@
-# FLL Challenge Robot Starter Kit (SPIKE Prime, Python, Ultra-Docs)
-**Audience:** FLL Challenge coaches + students new to coding and robotics  
-**Purpose:** A *teaching-first* codebase with **extreme comments, diagrams, and explanations**.  
-Everything is documented as if this were a tutorial book.
+# FLL Challenge Robot Starter Kit (SPIKE Prime, Python) — Executable + Heavily Commented
+This package contains **real, runnable code** with **detailed comments** (no placeholders).
+Import the whole `src/` folder into the SPIKE App (Python). Keep subfolders intact.
 
----
-## Key Concepts Taught
-- Mapping robot motors/sensors to Python objects
-- Writing **functions** that control motion/attachments
-- Using **optional sensors** (color, distance, force)
-- Building missions as **step-by-step functions**
-- Adding **auto-correct + retry** logic for reliability
-- Running calibration and updating constants
-- Visualizing with **flowcharts**
-
----
-## Directory Layout
+## Directory
 ```
-fll_ai_robot_kit_ultra/
+fll_ai_robot_kit_exec/
 ├─ README.md
 ├─ docs/
 │  ├─ QUICK_START.md
@@ -38,12 +26,9 @@ fll_ai_robot_kit_ultra/
       ├─ calibrate_wheels.py
       └─ measure_reflectance.py
 ```
----
-## How to Use
-1. Drag `src/` into your SPIKE App Python project.
-2. Open `config.py`, set your **ports** and **flags**.
-3. Run calibrations (wheel distance & line reflectance).
-4. Test simple mission (`mission1.py`), then state machine (`mission_state_machine.py`).
-5. Iterate with students: adjust constants, try retries, explore flowcharts.
 
----
+## Quick Start
+1) Drag **`src/`** into a SPIKE Python project.  
+2) Open `config.py`, set ports + sensor flags.  
+3) Run `src/calibration/calibrate_wheels.py` and `src/calibration/measure_reflectance.py`.  
+4) Put robot at Base and run `src/main.py`.

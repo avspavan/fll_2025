@@ -1,8 +1,10 @@
 flowchart TD
-  A[Start] --> B{Drive until black?}
-  B -->|Yes| C[Follow line 30cm]
-  B -->|No| D[Auto-correct]
-  D --> B
-  C --> E[Arm down/up]
-  E --> F[Return to base]
-  F --> G[End]
+  A[Start at Base] --> B{Drive until black?}
+  B -->|Yes| C[Line follow 30 cm]
+  B -->|No (timeout)| E[Auto-correct]
+  E -->|Try line reacquire| B
+  E -->|Else square to wall| B
+  C --> D[Actuate attachment]
+  D --> F{Return to Base}
+  F -->|Success| G[End]
+  F -->|Fail| E --> F

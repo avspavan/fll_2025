@@ -1,38 +1,37 @@
 """
-config.py — All constants, ports, and feature flags.
+config.py — ports, flags, and calibration constants.
+Flip flags to make sensors optional; code degrades gracefully if a sensor is disabled.
 
-Think of this as the "settings panel" for your robot.
-Students can toggle sensors ON/OFF and adjust calibration constants.
+MIT License.
 """
 
 # ---- PORTS ----
-# Each letter matches the hub port where a motor/sensor is plugged in.
-PORT_LEFT_MOTOR  = 'B'
-PORT_RIGHT_MOTOR = 'C'
-PORT_ARM_MOTOR   = 'A'
-PORT_COLOR_SENSOR    = 'D'
-PORT_DISTANCE_SENSOR = 'E'
-PORT_FORCE_SENSOR    = 'F'
+PORT_LEFT_MOTOR  = 'B'   # left wheel motor
+PORT_RIGHT_MOTOR = 'C'   # right wheel motor
+PORT_ARM_MOTOR   = 'A'   # attachment motor
+
+PORT_COLOR_SENSOR    = 'D'   # optional
+PORT_DISTANCE_SENSOR = 'E'   # optional
+PORT_FORCE_SENSOR    = 'F'   # optional
 
 # ---- FEATURE FLAGS ----
-# Turn sensors ON/OFF depending on availability or experiment design.
 USE_GYRO            = True
 USE_COLOR_SENSOR    = True
 USE_DISTANCE_SENSOR = True
 USE_FORCE_SENSOR    = False
 
-# ---- CALIBRATION CONSTANTS ----
-WHEEL_CIRCUMFERENCE_CM = 17.6   # Distance per wheel rotation
-TURN_FACTOR_DEG_PER_DEG = 0.95  # How much wheels must rotate per robot degree turn
+# ---- CALIBRATION ----
+WHEEL_CIRCUMFERENCE_CM   = 17.6  # cm per wheel rotation (56mm SPIKE wheel)
+TURN_FACTOR_DEG_PER_DEG  = 0.95  # wheel degrees per robot degree (empirical)
 
-# ---- LINE FOLLOW CONSTANTS ----
-LINE_TARGET = 50   # midpoint between white and black reflectance
+# ---- LINE FOLLOW ----
+LINE_TARGET = 50   # midpoint between white/black reflectance
 LINE_KP     = 0.35 # proportional gain for line-follow steering
 
-# ---- DISTANCE SENSOR CONSTANTS ----
+# ---- DISTANCE SENSOR ----
 WALL_APPROACH_CM = 8.0
 
-# ---- DEFAULT MOTION SPEEDS ----
+# ---- MOTION DEFAULTS ----
 DEFAULT_SPEED = 35
 SLOW_SPEED    = 20
 
